@@ -2,8 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const TelegramBot = require('node-telegram-bot-api');
 
-const token = 'BOT_TOKEN';
-const bot = new TelegramBot(token, { polling: true });
+const bot = new TelegramBot(config.token, { polling: true });
 
 const pluginsDir = path.join(__dirname, 'plugins');
 fs.readdirSync(pluginsDir).forEach(file => {
