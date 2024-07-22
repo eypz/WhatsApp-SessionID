@@ -13,7 +13,7 @@ const pastebin = new PasteClient("YOUR_PASTEBIN_API_KEY");
 
 function GET_SESSION_ID() {
   const randomString = Math.random().toString(36).substring(2, 11);
-  return `Socket~${randomString}`;
+  return `socket~${randomString}`;
 }
 
 app.use('/', router.get('/', (req, res) => {
