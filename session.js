@@ -45,13 +45,10 @@ app.get('/', async (req, res) => {
           const response = await axios.post(`${PRIVATEBIN_URL}/?paste`, encodedData, {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
           });
-          const paste_KEY = response.data.split('/')[3];
+          const PASTE_KEY = response.data.split('/')[3];
+          const Bin_HATED = `${PRIVATEBIN_URL}/${pasteKey}`;
           await socket.sendMessage(socket.user.id, {
-            text: `Socket;;;${paste_KEY}`
-          });
-
-          await socket.sendMessage(socket.user.id, {
-            text: `${PRIVATEBIN_URL}/${pasteKey}`
+            text: `*ᴅᴇᴀʀ*: ${socket.user.name}\n *ʏᴏᴜʀ sᴇssɪᴏɴ ɪᴅ* \n *_sessionID_*: Socket;;;${PASTE_KEY}\n*_PrivateBin_*: ${Bin_HATED}\n\nfooter: 2024 Astrid`
           });
 
         } catch (error) {
@@ -71,5 +68,5 @@ app.get('/', async (req, res) => {
 });
 
 app.listen(PORT, () => 
-   console.log(`${PORT}`));
-      
+  console.log(`${PORT}`));
+    
