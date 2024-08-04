@@ -21,7 +21,7 @@ async function getSessionData(sessionID) {
 }
 
 app.get('/', async (req, res) => {
-  const { state, saveCreds } = await useMultiFileAuthState("./auth_info.json");
+  const { state, saveCreds } = await useMultiFileAuthState("./multi_file_auth/auth_info.json");
   
   try {
     const socket = makeWASocket({
