@@ -1,3 +1,3 @@
-# wave_telebot
+# WhatsApp_SessionID
 > [!IMPORTANT]
-WaveBot telegram
+> SessionID for Bot
