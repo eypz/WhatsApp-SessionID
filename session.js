@@ -1,89 +1,75 @@
-let express = require("express");
-let { toBuffer } = require("qrcode");
+const express = require("express");
+const { toBuffer } = require("qrcode");
 const { exec } = require("child_process");
 const fs = require('fs');
-const { PasteClient, Publicity } = require("pastebin-ts");
-let app = global.app = express();
-const PORT = process.env.PORT || 3000;
+const axios = require("axios");
+const { default: makeWASocket, useMultiFileAuthState } = require("@whiskeysockets/baileys");
 const pino = require("pino");
-const router = express.Router();
-const { delay, makeWASocket, useMultiFileAuthState, makeInMemoryStore, WAConnection, MessageType, MessageOptions, Mimetype } = require("@whiskeysockets/baileys").default;
 
-const pastebin = new PasteClient("YOUR_PASTEBIN_API_KEY");
+const app = express();
+const PORT = process.env.PORT || 3000;
+const PRIVATEBIN_URL = "https://privatebin.net";
 
-function GET_SESSION_ID() {
-  const randomString = Math.random().toString(36).substring(2, 11);
-  return `socket~${randomString}`;
+async function getSessionData(sessionID) {
+  try {
+    const response = await axios.get(`${PRIVATEBIN_URL}/?paste=${sessionID}`);
+    return Buffer.from(response.data, 'base64').toString('utf-8');
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 }
 
-app.use('/', router.get('/', (req, res) => {
-  async function WhatsApp() {
-    const { state, saveCreds } = useMultiFileAuthState("./auth_baileys_creds");
-    try {
-      const version = [2, 2140, 12];
-      const socket = makeWASocket({
-        logger: pino({ level: 'silent' }),
-        browser: ["ALEXA MD", "Firefox", "3.0.0"],
-        auth: state,
-        version: version
-      });
-
-      socket.ev.on("connection.update", async (update) => {
-        console.log(update);
-        if (update.qr !== undefined) {
-          res.end(await toBuffer(update.qr));
-        }
-        const { connection, lastDisconnect } = update;
-        if (connection === 'open') {
-          const sessionID = GET_SESSION_ID();
-          const Data = JSON.stringify({ ...state.creds, sessionID });
-          fs.writeFileSync("./auth_baileys_creds/creds.json", Data);
-
-          const Message = {
-            text: `Hello ${socket.user.name}, Here is your id\nPlease don't share it with anyone
-            footer: 2024 Astrid`
-          };
-          await socket.sendMessage(socket.user.id, Message);
-
-          const Content = fs.readFileSync("./auth_baileys_creds/creds.json", "utf-8");
-
-          try {
-            const pasteUrl = await pastebin.createPaste({
-              code: Content,
-              expireDate: 'N',
-              publicity: Publicity.Unlisted,
-              format: "json",
-              name: "Session Data"
-            });
-
-            await socket.sendMessage(socket.user.id, {
-              text: `*Session ID*: ${sessionID}`
-            });
-
-            await socket.sendMessage(socket.user.id, {
-              document: fs.readFileSync("./auth_baileys_creds/creds.json"),
-              mimetype: "application/json",
-              fileName: "creds.json"
-            });
-          } catch (error) {
-            console.error(error);
-          }
-
-          exec('rs');
-          process.exit(0);
-        }
-        if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 409) {
-          WhatsApp();
-        }
-      });
-      socket.ev.on('creds.update', saveCreds);
-      socket.ev.on("messages.upsert", () => {});
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  WhatsApp();
-}));
-
-app.listen(PORT, () => console.log(PORT));
+app.get('/', async (req, res) => {
+  const { state, saveCreds } = await useMultiFileAuthState("./auth_info.json");
   
+  try {
+    const socket = makeWASocket({
+      logger: pino({ level: 'silent' }),
+      browser: ["ALEXA MD", "Firefox", "3.0.0"],
+      auth: state
+    });
+
+    socket.ev.on("connection.update", async (update) => {
+      if (update.qr) {
+        res.end(await toBuffer(update.qr));
+      }
+
+      const { connection, lastDisconnect } = update;
+      if (connection === 'open') {
+        const sessionID = socket.user.id;
+        const data = JSON.stringify({ ...state.creds, sessionID });
+
+        try {
+          const encodedData = Buffer.from(data).toString('base64');
+          const response = await axios.post(`${PRIVATEBIN_URL}/?paste`, encodedData, {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          });
+          const paste_KEY = response.data.split('/')[3];
+          await socket.sendMessage(socket.user.id, {
+            text: `Socket;;;${paste_KEY}`
+          });
+
+          await socket.sendMessage(socket.user.id, {
+            text: `${PRIVATEBIN_URL}/${pasteKey}`
+          });
+
+        } catch (error) {
+      }
+        process.exit(0);
+      }
+
+      if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode !== 409) {
+        WhatsApp();
+      }
+    });
+
+    socket.ev.on('creds.update', saveCreds);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+app.listen(PORT, () => 
+   console.log(`${PORT}`));
+      
