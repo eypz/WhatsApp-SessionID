@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-Astral Pairing Code</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-overlay"></div>
+    <div class="main-container">
+        <div class="form-container">
+            <h1>Pair Code</h1>
+            <p>Enter your phone number to auto scan/pair code.</p>
+            <form id="numberForm">
+                <input type="text" id="number" name="number" placeholder="+27686881509" required>
+                <button type="submit">Get Code</button>
+            </form>
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('numberForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const number = document.getElementById('number').value;
+            fetch('/api/pair', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ number: number })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultBox = document.getElementById('result');
+                resultBox.innerHTML = '';
+
+                if (data.code) {
+                    const codeBox = document.createElement('div');
+                    codeBox.className = 'code-box';
+                    codeBox.innerHTML = `<div class="code"><strong>${data.code}</strong></div>`;
+                    resultBox.appendChild(codeBox);
+                } else {
+                    const errorBox = document.createElement('div');
+                    errorBox.className = 'error-box';
+                    errorBox.innerText = `Error: ${data.error}`;
+                    resultBox.appendChild(errorBox);
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                const errorBox = document.createElement('div');
+                errorBox.className = 'error-box';
+                errorBox.innerText = 'Please try again';
+                document.getElementById('result').appendChild(errorBox);
+            });
+        });
+    </script>
+</body>
+</html>
