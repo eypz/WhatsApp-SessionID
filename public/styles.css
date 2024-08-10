@@ -1,0 +1,200 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Raleway', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+.background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1;
+}
+
+.main-container {
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+
+.form-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+
+h1 {
+    font-family: 'Roboto', sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: slideInDown 1.2s ease-in-out;
+}
+
+p {
+    margin-bottom: 25px;
+    font-size: 1rem;
+    color: #d3d3d3;
+    animation: slideInUp 1.2s ease-in-out;
+}
+
+
+input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+input[type="text"]:focus {
+    background: rgba(255, 255, 255, 0.3);
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    background-color: #00c6ff;
+    background-image: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    animation: bounceIn 1.5s ease;
+}
+
+button:hover {
+    background-color: #0072ff;
+}
+
+#result {
+    margin-top: 25px;
+}
+
+.code-box {
+    padding: 15px;
+    margin-bottom: 10px;
+    background: rgba(0, 198, 255, 0.2);
+    border-radius: 8px;
+    border: 2px solid #00c6ff;
+    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.2rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+    animation: flipInX 1s ease-in-out;
+}
+
+.code-box:hover {
+    transform: scale(1.05);
+}
+
+.error-box {
+    padding: 15px;
+    margin-bottom: 10px;
+    background: rgba(255, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 2px solid #ff0000;
+    color: #fff;
+    font-size: 1rem;
+    text-align: center;
+    animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInDown {
+    from { transform: translateY(-100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bounceIn {
+    0%, 20%, 40%, 60%, 80%, 100% {
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+    50% {
+        -webkit-transform: translateY(-20px);
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes flipInX {
+    from {
+        transform: perspective(400px) rotateX(90deg);
+        animation-timing-function: ease-in;
+        opacity: 0;
+    }
+    40% {
+        transform: perspective(400px) rotateX(-10deg);
+        animation-timing-function: ease-in;
+    }
+    70% {
+        transform: perspective(400px) rotateX(10deg);
+    }
+    100% {
+        transform: perspective(400px) rotateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes shake {
+    10%, 90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+    20%, 80% {
+        transform: translate3d(2px, 0, 0);
+    }
+    30%, 50%, 70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+    40%, 60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
